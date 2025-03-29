@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}搜索结果: {{ query }} - 具身智能人形机器人导航站{% endblock %}
+
+{% block content %}
+<div class="search-results-header">
+    <h1>搜索结果: <span class="search-keyword">{{ query }}</span></h1>
+    <p class="search-count">找到 {{ results|length }} 个相关资源</p>
+</div>
+
+{% if results %}
+<div class="sites-grid">
+    {% for site in results %}
+    <div class="site-card">
+        <div class="site-image" style="background-image: url('{{ url_for('static', filename='images/' + site.get('image', 'default.png')) }}');">
+            {% if site.get('rating', 0) >= 4.5 %}
+            <span class="badge badge-featured">精选</span>
+            {% endif %}
+        </div>
+        <div class="site-content">
+            <h3 class="site-title"><a href="{{ site.url }}" target="_blank">{{ site.name }}</a></h3>
+            <p class="site-description">{{ site.description }}</p>
+            <div class="site-meta">
+                <span class="site-category">{{ site.get('category', '未分类') }}</span>
+                {% if site.get('subcategory') %}
+                <span class="site-subcategory">{{ site.subcategory }}</span>
+                {% endif %}
+            </div>
+            <div class="site-tags">
+                {% for tag in site.get('tags', [])[:3] %}
+                <span class="tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center mb-4">
+    <p>未找到与 "{{ query }}" 相关的资源，请尝试其他关键词或浏览以下分类：</p>
+    
+    <div class="categories-grid mt-2">
+        {% for category in categories.keys() %}
+        <div class="category-card">
+            <h3><a href="{{ url_for('category', category_name=category) }}">{{ category }}</a></h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %} 
