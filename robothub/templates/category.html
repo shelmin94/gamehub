@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category }} - 具身智能人形机器人导航站{% endblock %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li><a href="{{ url_for('index') }}">首页</a></li>
+    <li><a href="{{ url_for('category', category_name=category) }}">{{ category }}</a></li>
+</ul>
+
+<div class="mb-4">
+    <h1 class="section-title">{{ category }}</h1>
+    
+    {% if subcategories %}
+    <div class="subcategory-nav">
+        <button class="subcategory-btn active" data-subcategory="all">全部</button>
+        {% for subcategory in subcategories %}
+        <button class="subcategory-btn" data-subcategory="{{ subcategory }}">{{ subcategory }}</button>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="sites-grid">
+        {% for site in sites %}
+        <div class="site-card" data-subcategory="{{ site.get('subcategory', '') }}">
+            <div class="site-image" style="background-image: url('{{ url_for('static', filename='images/' + site.get('image', 'default.png')) }}');">
+                {% if site.get('rating', 0) >= 4.5 %}
+                <span class="badge badge-featured">精选</span>
+                {% endif %}
+            </div>
+            <div class="site-content">
+                <h3 class="site-title"><a href="{{ site.url }}" target="_blank">{{ site.name }}</a></h3>
+                <p class="site-description">{{ site.description }}</p>
+                <div class="site-tags">
+                    {% for tag in site.get('tags', [])[:3] %}
+                    <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if not sites %}
+<div class="text-center">
+    <p>该分类下暂无资源</p>
+</div>
+{% endif %}
+{% endblock %} 
